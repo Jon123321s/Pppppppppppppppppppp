@@ -1,0 +1,105 @@
+задачи может выглядеть следующим образом:
+
+cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+// Функция для проверки уникальности символов в наборе
+bool isUnique(const std::string& input) {
+    std::string sortedInput = input;
+    std::sort(sortedInput.begin(), sortedInput.end());
+
+    for (int i = 1; i < sortedInput.size(); i++) {
+        if (sortedInput[i] == sortedInput[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Функция для генерации названий папок
+std::string generateFolderName(const std::string& alphabet, int size) {
+    std::string folderName;
+
+    for (int i = 0; i < size; i++) {
+        folderName += alphabet[i % alphabet.size()];
+    }
+
+    return folderName;
+}
+
+// Функция для генерации названий файлов
+std::string generateFileName(const std::string& alphabetBeforeDot, const std::string& alphabetAfterDot, int size) {
+    std::string fileName;
+
+    for (int i = 0; i < size; i++) {
+        if (i == alphabetBeforeDot.size()) {
+            fileName += '.';
+        }
+        fileName += (i < alphabetBeforeDot.size()) ? alphabetBeforeDot[i] : alphabetAfterDot[(i - alphabetBeforeDot.size()) % alphabetAfterDot.size()];
+    }
+
+    return fileName;
+}
+
+int main() {
+    std::string symbols;
+    std::cout << "Введите набор символов (от 4 до 7, уникальные): ";
+    std::getline(std::cin, symbols);
+
+    // Проверяем допустимый размер набора символов и уникальность
+    while (symbols.size() < 4 || symbols.size() > 7 || !isUnique(symbols)) {
+        std::cout << "Неверный ввод. Попробуйте снова: ";
+        std::getline(std::cin, symbols);
+    }
+
+    int numFolders;
+    std::cout << "Введите количество папок для создания: ";
+    std::cin >> numFolders;
+
+    // Проверяем допустимое количество папок
+    while (numFolders <= 0) {
+        std::cout << "Неверный ввод. Попробуйте снова: ";
+        std::cin >> numFolders;
+    }
+
+    std::string folderAlphabet;
+    std::cout << "Введите алфавит для названия папок: ";
+    std::cin >> folderAlphabet;
+
+    int numFiles;
+    std::cout << "Введите количество файлов для создания в каждой папке: ";
+    std::cin >> numFiles;
+
+    // Проверяем допустимое количество файлов
+    while (numFiles <= 0) {
+        std::cout << "Неверный ввод. Попробуйте снова: ";
+        std::cin >> numFiles;
+    }
+
+    std::string fileAlphabetBeforeDot, fileAlphabetAfterDot;
+    std::cout << "Введите алфавит для названия файлов (до точки и после точки): ";
+    std::cin >> fileAlphabetBeforeDot >> fileAlphabetAfterDot;
+
+    // Проверяем наличие символа точки в алфавите для названия файлов
+    while (fileAlphabetBeforeDot.find('.') == std::string::npos || fileAlphabetAfterDot.find('.') != std::string::npos) {
+        std::cout << "Неверный ввод. Попробуйте снова: ";
+        std::cin >> fileAlphabetBeforeDot >> fileAlphabetAfterDot;
+    }
+
+    // Создаем папки и файлы
+    for (int i = 0; i < numFolders; i++) {
+        std::string folderName = generateFolderName(folderAlphabet, symbols.size());
+        std::cout << "Создана папка: " << folderName << std::endl;
+
+        for (int j = 0; j < numFiles; j++) {
+            std::string fileName = generateFileName(symbols, fileAlphabetAfterDot, symbols.size() + 3);
+            std::cout << "Создан файл в папке " << folderName << ": " << fileName << std::endl;
+        }
+    }
+
+    return 0;
+}
